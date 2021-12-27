@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: local
   devtools:
     livereload:
       enabled: true
@@ -11,3 +9,6 @@ spring:
     cache: false
   jwt:
     secret: govlepel@$&
+  redis:
+    host: localhost
+    port: 6379
