@@ -20,6 +20,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
+// https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka
+    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '2.2.15.RELEASE'
+
+
     //embedded-redis
     implementation 'it.ozimov:embedded-redis:0.7.2'
     implementation 'org.webjars.bower:bootstrap:4.3.1'
