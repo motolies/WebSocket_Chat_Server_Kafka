@@ -12,30 +12,48 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Configuration
 public class RabbitConfig {
-    private static final String queueName = "spring-boot";
 
-    private static final String topicExchangeName = "spring-boot-exchange";
+    @Value("${spring.rabbitmq.exchange-name}")
+    private String EXCHANGE_NAME;
+
+    @Value("${spring.rabbitmq.queue-prefix}")
+    private String QUEUE_PREFIX;
+
+    private static String QUEUE_NAME;
+
+    @PostConstruct
+    private void tempQueueName() {
+        QUEUE_NAME = this.QUEUE_PREFIX + UUID.randomUUID().toString();
+        ;
+    }
 
     @Bean
     Queue queue() {
         // 여기서 서버별로 임시큐를 생성해주면 되지 않을까??
-        return new Queue(queueName, false);
+//        return new Queue(QUEUE_NAME, false, false, true);
+        return new Queue(QUEUE_NAME, false);
     }
 
     @Bean
     TopicExchange exchange() {
-        return new TopicExchange(topicExchangeName);
+        // exchange는 fanout 타입으로
+//        return new TopicExchange(EXCHANGE_NAME, true, false);
+        return new TopicExchange(EXCHANGE_NAME);
     }
 
     @Bean
     Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with("foo.bar.#");
+        return BindingBuilder.bind(queue).to(exchange).with("chat.server." + QUEUE_NAME);
     }
 
     @Bean
@@ -57,7 +75,7 @@ public class RabbitConfig {
                                              MessageListenerAdapter rabbitListenerAdapter) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(queueName);
+        container.setQueueNames(QUEUE_NAME);
         container.setMessageListener(rabbitListenerAdapter);
         return container;
     }

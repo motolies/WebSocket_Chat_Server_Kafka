@@ -3,11 +3,14 @@ package com.websocket.chat.service;
 import com.websocket.chat.model.ChatMessage;
 import com.websocket.chat.repo.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ChatService {
@@ -17,6 +20,9 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
 
     private final RabbitTemplate rabbitTemplate;
+
+    @Value("${spring.rabbitmq.exchange-name}")
+    private String EXCHANGE_NAME;
 
 
     /**
@@ -43,7 +49,9 @@ public class ChatService {
             chatMessage.setSender("[알림]");
         }
 //        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
-        rabbitTemplate.convertAndSend("spring-boot-exchange", "foo.bar.#", chatMessage);
+
+        log.info("@@@@@ 송신 양호 @@@@ {}", chatMessage.toString());
+        rabbitTemplate.convertAndSend(EXCHANGE_NAME, "chat.#", chatMessage);
     }
 
 }
