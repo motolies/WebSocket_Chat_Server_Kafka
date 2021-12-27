@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.websocket.chat.model.ChatMessage;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.IntegerSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -16,11 +17,18 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
 @EnableKafka
 @Configuration
 public class KafkaConfig {
+
+    @Value("${spring.kafka.consumer.grouping.id}")
+    private String groupId;
+
+    private static String GROUP_ID;
+
     //Sender config
     @Bean
     public ProducerFactory<String, ChatMessage> producerFactory() {
@@ -39,7 +47,7 @@ public class KafkaConfig {
                 .put("bootstrap.servers", "localhost:9092")//kafka server ip & port
                 .put("key.serializer", IntegerSerializer.class)
                 .put("value.serializer", JsonSerializer.class)//Object json parser
-                .put("group.id", "spring-chat-room") // chatting  group id
+                .put("group.id", groupId) // chatting  group id
                 .build();
     }
 
@@ -62,7 +70,7 @@ public class KafkaConfig {
                 .put("bootstrap.servers", "localhost:9092")
                 .put("key.deserializer", IntegerDeserializer.class)
                 .put("value.deserializer", JsonDeserializer.class)
-                .put("group.id", "spring-chat-room")
+                .put("group.id", groupId)
                 .build();
     }
 }

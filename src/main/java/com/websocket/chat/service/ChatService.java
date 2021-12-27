@@ -3,17 +3,18 @@ package com.websocket.chat.service;
 import com.websocket.chat.model.ChatMessage;
 import com.websocket.chat.repo.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ChatService {
 
     private final ChannelTopic channelTopic;
-//    private final RedisTemplate redisTemplate;
+    //    private final RedisTemplate redisTemplate;
     private final ChatRoomRepository chatRoomRepository;
 
     private final KafkaTemplate<String, ChatMessage> kafkaTemplate;
@@ -43,6 +44,7 @@ public class ChatService {
         }
 //        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
 
+        log.info("@@@@@@@@@@ 발행함 @@@@@@@@@ {}", chatMessage.toString());
         kafkaTemplate.send("CHAT_ROOM", chatMessage);
     }
 

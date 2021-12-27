@@ -21,7 +21,7 @@ public class KafkaSubscriber {
 
     @KafkaListener(id = "main-listener", topics = "CHAT_ROOM")
     public void receive(ChatMessage message) throws Exception {
-        log.info("message='{}'", message.toString());
+        log.info("@@@@@@@@@@ 구독함 @@@@@@@@@ {}", message.toString());
         this.template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 }

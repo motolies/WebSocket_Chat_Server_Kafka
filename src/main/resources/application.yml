@@ -12,3 +12,7 @@ spring:
   redis:
     host: localhost
     port: 6379
+  kafka:
+    consumer:
+      grouping:
+        id: my-group
