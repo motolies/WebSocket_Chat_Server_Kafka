@@ -40,20 +40,21 @@ public class RabbitConfig {
     @Bean
     Queue queue() {
         // 여기서 서버별로 임시큐를 생성해주면 되지 않을까??
-//        return new Queue(QUEUE_NAME, false, false, true);
-        return new Queue(QUEUE_NAME, false);
+        return new Queue(QUEUE_NAME, false, false, true);
+//        return new Queue(QUEUE_NAME, false);
     }
 
     @Bean
     TopicExchange exchange() {
-        // exchange는 fanout 타입으로
-//        return new TopicExchange(EXCHANGE_NAME, true, false);
-        return new TopicExchange(EXCHANGE_NAME);
+        return new TopicExchange(EXCHANGE_NAME, true, false);
+//        return new TopicExchange(EXCHANGE_NAME);
     }
 
     @Bean
     Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with("chat.server." + QUEUE_NAME);
+        // 바인딩 해줄 때 #,* 등을 사용해서 라우팅키를 만들어주고
+        // 실제 보낼 때는 완전한 #,*이 없는 완전한 routingKey를 사용해서 보내주면 된다.
+        return BindingBuilder.bind(queue).to(exchange).with("chat.server.#");
     }
 
     @Bean

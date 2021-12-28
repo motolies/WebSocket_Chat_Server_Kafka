@@ -51,7 +51,7 @@ public class ChatService {
 //        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
 
         log.info("@@@@@ 송신 양호 @@@@ {}", chatMessage.toString());
-        rabbitTemplate.convertAndSend(EXCHANGE_NAME, "chat.#", chatMessage);
+        rabbitTemplate.convertAndSend(EXCHANGE_NAME, "chat.server.message", chatMessage);
     }
 
 }
