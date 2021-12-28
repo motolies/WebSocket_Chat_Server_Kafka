@@ -16,3 +16,4 @@ spring:
     consumer:
       grouping:
         id: my-group
+      topic: chat-topic

@@ -45,7 +45,7 @@ public class ChatService {
 //        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
 
         log.info("@@@@@@@@@@ 발행함 @@@@@@@@@ {}", chatMessage.toString());
-        kafkaTemplate.send("CHAT_ROOM", chatMessage);
+        kafkaTemplate.send("chat-topic", chatMessage);
     }
 
 }

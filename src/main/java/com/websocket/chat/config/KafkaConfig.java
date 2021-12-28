@@ -2,6 +2,7 @@ package com.websocket.chat.config;
 
 import com.google.common.collect.ImmutableMap;
 import com.websocket.chat.model.ChatMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,9 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.UUID;
 
+@Slf4j
 @EnableKafka
 @Configuration
 public class KafkaConfig {
@@ -66,11 +69,15 @@ public class KafkaConfig {
 
     @Bean
     public Map<String, Object> consumerConfigs() {
+
+        String GROUP_ID = groupId + UUID.randomUUID().toString();
+        log.info("@@@@@@@@@ 그룹ID @@@@@@@ {}", GROUP_ID);
+
         return ImmutableMap.<String, Object>builder()
                 .put("bootstrap.servers", "localhost:9092")
                 .put("key.deserializer", IntegerDeserializer.class)
                 .put("value.deserializer", JsonDeserializer.class)
-                .put("group.id", groupId)
+                .put("group.id", GROUP_ID)
                 .build();
     }
 }
